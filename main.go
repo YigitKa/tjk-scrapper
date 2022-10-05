@@ -12,6 +12,7 @@ import (
 	jokey "hello/models"
 )
 
+// Move another file
 func parseSuspendedJokey() {
 	// Request the HTML page.
 	res, err := http.Get("https://www.tjk.org/TR/YarisSever/Query/Page/CezaliJokey")
@@ -20,6 +21,7 @@ func parseSuspendedJokey() {
 	}
 
 	defer res.Body.Close()
+	// Check status code
 	if res.StatusCode != 200 {
 		log.Fatalf("status code error: %d %s", res.StatusCode, res.Status)
 	}
@@ -30,13 +32,20 @@ func parseSuspendedJokey() {
 		log.Fatal(err)
 	}
 
+	// TODO: try make instead of array
 	jokeys := []jokey.Jokey{}
+
+	// TODO: need refactor
+	// ajaxtbody element contains information about suspended jokey(s)
+	// check each element if values are filled.
 	doc.Find(".ajaxtbody").Each(func(i int, s *goquery.Selection) {
 		s.Find(".sorgu-CezaliJokey-JokeyAdi").Each(func(i int, k *goquery.Selection) {
 			name := strings.Trim(k.Text(), "\r\n")
 			name = strings.ReplaceAll(name, "  ", "")
 			if strings.TrimSpace(name) != "" {
 				jokeys = append(jokeys, jokey.Jokey{Id: i + 1, Name: strings.TrimSpace(name)})
+			} else {
+				// TODO: if name empty. no need to continue. go next record
 			}
 		})
 		s.Find(".sorgu-CezaliJokey-BaslangicTarihi").Each(func(i int, k *goquery.Selection) {
@@ -89,6 +98,7 @@ func parseSuspendedJokey() {
 	})
 }
 
+// TODO: move another file
 func wordWrap(text string, lineWidth int) (wrapped string) {
 	words := strings.Fields(strings.TrimSpace(text))
 	if len(words) == 0 {
@@ -108,6 +118,7 @@ func wordWrap(text string, lineWidth int) (wrapped string) {
 	return
 }
 
+// TODO check args
 func main() {
 	parseSuspendedJokey()
 }
