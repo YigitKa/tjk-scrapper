@@ -1,4 +1,4 @@
-module hello
+module tjk-scrapper
 
 go 1.19
 

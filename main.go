@@ -9,7 +9,8 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"github.com/alexeyco/simpletable"
 
-	jokey "hello/models"
+	helper "tjk-scrapper/helpers"
+	jokey "tjk-scrapper/models"
 )
 
 // Move another file
@@ -66,7 +67,7 @@ func parseSuspendedJokey() {
 			description := strings.Trim(k.Text(), "\r\n")
 			description = strings.ReplaceAll(description, "  ", "")
 			if strings.TrimSpace(description) != "" {
-				jokeys[i].Description = wordWrap(strings.TrimSpace(description), 50)
+				jokeys[i].Description = helper.WordWrap(strings.TrimSpace(description), 50)
 			}
 		})
 		table := simpletable.New()
@@ -96,26 +97,6 @@ func parseSuspendedJokey() {
 		table.SetStyle(simpletable.StyleDefault)
 		fmt.Println(table.String())
 	})
-}
-
-// TODO: move another file
-func wordWrap(text string, lineWidth int) (wrapped string) {
-	words := strings.Fields(strings.TrimSpace(text))
-	if len(words) == 0 {
-		return text
-	}
-	wrapped = words[0]
-	spaceLeft := lineWidth - len(wrapped)
-	for _, word := range words[1:] {
-		if len(word)+1 > spaceLeft {
-			wrapped += "\n" + word
-			spaceLeft = lineWidth - len(word)
-		} else {
-			wrapped += " " + word
-			spaceLeft -= 1 + len(word)
-		}
-	}
-	return
 }
 
 // TODO check args
