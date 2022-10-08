@@ -34,7 +34,7 @@ func parseSuspendedJokey() {
 	}
 
 	// TODO: try make instead of array
-	jokeys := []jokey.Jokey{}
+	jokeys := make([]jokey.Jokey, 0)
 
 	// TODO: need refactor
 	// ajaxtbody element contains information about suspended jokey(s)
@@ -60,14 +60,14 @@ func parseSuspendedJokey() {
 			endDate := strings.Trim(k.Text(), "\r\n")
 			endDate = strings.ReplaceAll(endDate, "  ", "")
 			if strings.TrimSpace(endDate) != "" {
-				jokeys[i].AllowDate = strings.TrimSpace(endDate)
+				jokeys[i].DueDate = strings.TrimSpace(endDate)
 			}
 		})
 		s.Find(".sorgu-CezaliJokey-CezaNedeni").Each(func(i int, k *goquery.Selection) {
 			description := strings.Trim(k.Text(), "\r\n")
 			description = strings.ReplaceAll(description, "  ", "")
 			if strings.TrimSpace(description) != "" {
-				jokeys[i].Description = helper.WordWrap(strings.TrimSpace(description), 50)
+				jokeys[i].BanReason = helper.WordWrap(strings.TrimSpace(description), 50)
 			}
 		})
 		table := simpletable.New()
@@ -87,8 +87,8 @@ func parseSuspendedJokey() {
 				{Align: simpletable.AlignLeft, Text: fmt.Sprintf("%d", jokeys[row].Id)},
 				{Text: jokeys[row].Name},
 				{Align: simpletable.AlignLeft, Text: jokeys[row].SuspendDate},
-				{Align: simpletable.AlignLeft, Text: jokeys[row].AllowDate},
-				{Align: simpletable.AlignLeft, Span: 1, Text: jokeys[row].Description},
+				{Align: simpletable.AlignLeft, Text: jokeys[row].DueDate},
+				{Align: simpletable.AlignLeft, Span: 1, Text: jokeys[row].BanReason},
 			}
 
 			table.Body.Cells = append(table.Body.Cells, r)
