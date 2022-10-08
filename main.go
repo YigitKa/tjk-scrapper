@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
@@ -14,7 +15,7 @@ import (
 )
 
 // Move another file
-func parseSuspendedJokey() {
+func parseSuspendedJokey(jsonOutPtr *bool, tableOutPtr *bool) {
 	// Request the HTML page.
 	res, err := http.Get("https://www.tjk.org/TR/YarisSever/Query/Page/CezaliJokey")
 	if err != nil {
@@ -70,36 +71,48 @@ func parseSuspendedJokey() {
 				jokeys[i].BanReason = helper.WordWrap(strings.TrimSpace(description), 50)
 			}
 		})
-		table := simpletable.New()
 
-		table.Header = &simpletable.Header{
-			Cells: []*simpletable.Cell{
-				{Align: simpletable.AlignCenter, Text: "#"},
-				{Align: simpletable.AlignCenter, Text: "Jokey Adı"},
-				{Align: simpletable.AlignCenter, Text: "Ceza Başlangıç"},
-				{Align: simpletable.AlignCenter, Text: "Ceza Bitiş"},
-				{Align: simpletable.AlignCenter, Text: "Nedeni"},
-			},
-		}
+		if *tableOutPtr {
+			table := simpletable.New()
 
-		for row := range jokeys {
-			r := []*simpletable.Cell{
-				{Align: simpletable.AlignLeft, Text: fmt.Sprintf("%d", jokeys[row].Id)},
-				{Text: jokeys[row].Name},
-				{Align: simpletable.AlignLeft, Text: jokeys[row].SuspendDate},
-				{Align: simpletable.AlignLeft, Text: jokeys[row].DueDate},
-				{Align: simpletable.AlignLeft, Span: 1, Text: jokeys[row].BanReason},
+			table.Header = &simpletable.Header{
+				Cells: []*simpletable.Cell{
+					{Align: simpletable.AlignCenter, Text: "#"},
+					{Align: simpletable.AlignCenter, Text: "Jokey Adı"},
+					{Align: simpletable.AlignCenter, Text: "Ceza Başlangıç"},
+					{Align: simpletable.AlignCenter, Text: "Ceza Bitiş"},
+					{Align: simpletable.AlignCenter, Text: "Nedeni"},
+				},
 			}
 
-			table.Body.Cells = append(table.Body.Cells, r)
+			for row := range jokeys {
+				r := []*simpletable.Cell{
+					{Align: simpletable.AlignLeft, Text: fmt.Sprintf("%d", jokeys[row].Id)},
+					{Text: jokeys[row].Name},
+					{Align: simpletable.AlignLeft, Text: jokeys[row].SuspendDate},
+					{Align: simpletable.AlignLeft, Text: jokeys[row].DueDate},
+					{Align: simpletable.AlignLeft, Span: 1, Text: jokeys[row].BanReason},
+				}
+
+				table.Body.Cells = append(table.Body.Cells, r)
+			}
+
+			table.SetStyle(simpletable.StyleDefault)
+			fmt.Println(table.String())
 		}
 
-		table.SetStyle(simpletable.StyleDefault)
-		fmt.Println(table.String())
+		if *jsonOutPtr {
+			fmt.Println(jokey.ToJson(jokeys))
+		}
 	})
 }
 
 // TODO check args
 func main() {
-	parseSuspendedJokey()
+	jsonOutPtr := flag.Bool("json", false, "a bool")
+	tableOutPtr := flag.Bool("table", false, "a bool")
+
+	flag.Parse()
+
+	parseSuspendedJokey(jsonOutPtr, tableOutPtr)
 }
