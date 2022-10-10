@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
@@ -113,6 +114,11 @@ func main() {
 	tableOutPtr := flag.Bool("table", false, "a bool")
 
 	flag.Parse()
+	if !*jsonOutPtr && !*tableOutPtr {
+		fmt.Println("no parameters given. try --json or/and --table")
+		os.Exit(1)
+	}
 
 	parseSuspendedJokey(jsonOutPtr, tableOutPtr)
+	os.Exit(0) // sussess exit
 }
