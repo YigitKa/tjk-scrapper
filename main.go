@@ -15,7 +15,6 @@ import (
 	jokey "tjk-scrapper/models"
 )
 
-// Move another file
 func parseSuspendedJokey(jsonOutPtr *bool, tableOutPtr *bool) {
 	// Request the HTML page.
 	res, err := http.Get("https://www.tjk.org/TR/YarisSever/Query/Page/CezaliJokey")
@@ -35,10 +34,8 @@ func parseSuspendedJokey(jsonOutPtr *bool, tableOutPtr *bool) {
 		log.Fatal(err)
 	}
 
-	// TODO: try make instead of array
 	jokeys := make([]jokey.Jokey, 0)
 
-	// TODO: need refactor
 	// ajaxtbody element contains information about suspended jokey(s)
 	// check each element if values are filled.
 	doc.Find(".ajaxtbody").Each(func(i int, s *goquery.Selection) {
@@ -48,7 +45,7 @@ func parseSuspendedJokey(jsonOutPtr *bool, tableOutPtr *bool) {
 			if strings.TrimSpace(name) != "" {
 				jokeys = append(jokeys, jokey.Jokey{Id: i + 1, Name: strings.TrimSpace(name)})
 			} else {
-				// TODO: if name empty. no need to continue. go next record
+				s.Next()
 			}
 		})
 		s.Find(".sorgu-CezaliJokey-BaslangicTarihi").Each(func(i int, k *goquery.Selection) {
@@ -108,7 +105,6 @@ func parseSuspendedJokey(jsonOutPtr *bool, tableOutPtr *bool) {
 	})
 }
 
-// TODO check args
 func main() {
 	jsonOutPtr := flag.Bool("json", false, "a bool")
 	tableOutPtr := flag.Bool("table", false, "a bool")
