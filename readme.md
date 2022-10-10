@@ -28,4 +28,7 @@ gives a table like view output.
 ![image](https://user-images.githubusercontent.com/21237298/194708712-dac2f000-7e94-4f54-bb79-a92df971e5e0.png)
 
 ## Build
-// TODO
+To build app you can use.
+```
+go build
+```
